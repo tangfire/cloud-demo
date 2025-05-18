@@ -1,0 +1,24 @@
+#配置OpenFeign
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          # 配置默认超时时间
+          default:
+            connect-timeout: 1000
+            read-timeout: 2000
+          # 配置某个具体FeignClient的超时时间
+          service-product:
+            logger-level: full
+            connect-timeout: 3000
+            read-timeout: 5000
+#            request-interceptors:
+#              - com.sky.order.interceptor.XTokenRequestInterceptor
+#            retryer:
+      # 分割web上下文
+      web-context-unify: false
+
+feign:
+  sentinel:
+    enabled: true

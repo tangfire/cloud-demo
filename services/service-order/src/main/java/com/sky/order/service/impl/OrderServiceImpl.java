@@ -1,6 +1,9 @@
 package com.sky.order.service.impl;
 
+import com.alibaba.csp.sentinel.annotation.SentinelResource;
+import com.alibaba.csp.sentinel.slots.block.BlockException;
 import com.sky.order.bean.Order;
+import com.sky.order.feign.ProductFeignClient;
 import com.sky.order.service.OrderService;
 import com.sky.product.bean.Product;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +32,18 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     LoadBalancerClient loadBalancerClient;
 
+    @Autowired
+    ProductFeignClient productFeignClient;
+
+
+    @SentinelResource(value = "createOrder",blockHandler = "createOrderFallback")
     @Override
     public Order createOrder(Long productId, Long userId) {
 //        Product product = getProductFromRemote(productId);
 //        Product product = getProductFromRemoteWithLoadBalance(productId);
-        Product product = getProductFromRemoteWithLoadBalanceAnnotation(productId);
+//        Product product = getProductFromRemoteWithLoadBalanceAnnotation(productId);
+        // 使用Feign完成远程调用(自动负载均衡)
+        Product product = productFeignClient.getProductById(productId);
         Order order = new Order();
         order.setId(1L);
         BigDecimal totalAmount = product.getPrice().multiply(new BigDecimal(product.getNum()));
@@ -44,6 +54,23 @@ public class OrderServiceImpl implements OrderService {
         order.setProductList(Arrays.asList(product));
         return order;
 
+    }
+
+    /**
+     * 兜底回调
+     * @param productId
+     * @param userId
+     * @param e
+     * @return
+     */
+    public Order createOrderFallback(Long productId, Long userId, BlockException e) {
+        Order order = new Order();
+        order.setId(1L);
+        order.setUserId(userId);
+        order.setNickName("tangfire");
+        order.setAddress("gdut");
+        order.setTotalAmount(BigDecimal.ZERO);
+        return order;
     }
 
     private Product getProductFromRemote(Long productId){

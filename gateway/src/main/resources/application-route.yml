@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    gateway:
+      # 配置route转发规则
+      routes:
+        - id: order-rote
+          uri: lb://server-order
+          predicates:
+            - Path=/order/**
+        - id: product-rote
+          uri: lb://server-product
+          predicates:
+            - Path=/product/**
+        - id: bing-rote
+          uri: https://cn.bing.com
+          predicates:
+            - Path=/**

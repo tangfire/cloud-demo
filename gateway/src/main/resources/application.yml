@@ -1,0 +1,12 @@
+spring:
+  #对指定的配置文件生效
+  profiles:
+    include: route
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+
+server:
+  port: 81

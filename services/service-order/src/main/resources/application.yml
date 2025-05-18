@@ -2,19 +2,61 @@ server:
   port: 8000
 spring:
   config:
-    import: nacos:service-order.properties
+    import:
+      - nacos:common.properties?group=order
+      - nacos:database.properties?group=order
+  #    import: nacos:service-order.properties
   profiles:
+    active: dev
     include: feign
   application:
     name: service-order
   cloud:
+    sentinel:
+      transport:
+        dashboard: localhost:8858
+      eager: true
+      web-context-unify: false
     nacos:
       server-addr: 127.0.0.1:8848
-
-
+      config:
+        import-check:
+          enabled: false
+        namespace: ${spring.profiles.active:public}
+#        namespace: test
 logging:
   level:
-    com.order.feign: debug
+    com.sky.order.feign: debug
+
+---
+
+spring:
+  config:
+    import:
+      - nacos:common.properties?group=order
+      - nacos:database.properties?group=order
+    activate:
+      on-profile: dev
+
+---
+spring:
+  config:
+    import:
+      - nacos:common.properties?group=order
+      - nacos:database.properties?group=order
+    activate:
+      on-profile: test
+
+
+---
+spring:
+  config:
+    import:
+      - nacos:common.properties?group=order
+      - nacos:database.properties?group=order
+    activate:
+      on-profile: prod
+
 
 
 
