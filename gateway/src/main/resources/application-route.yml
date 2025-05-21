@@ -3,15 +3,15 @@ spring:
     gateway:
       # 配置route转发规则
       routes:
-        - id: order-rote
-          uri: lb://server-order
+        - id: order-route
+          uri: lb://service-order
           predicates:
-            - Path=/order/**
-        - id: product-rote
-          uri: lb://server-product
+            - Path=/api/order/**
+        - id: product-route
+          uri: lb://service-product
           predicates:
-            - Path=/product/**
-        - id: bing-rote
+            - Path=/api/product/**
+        - id: bing-route
           uri: https://cn.bing.com
           predicates:
             - Path=/**
